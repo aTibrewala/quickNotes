@@ -21,16 +21,34 @@ var blog = mongoose.model("Blog", quickNotesSchema);
 
 //RESTFUL ROUTES
 
+// DEFAULT route, redirects to INDEX route
 app.get("/", function(req, res) {
   res.redirect("/blogs");
 });
 
+// INDEX route
 app.get("/blogs", function(req, res) {
   blog.find({}, function(err, blogs) {
     if (err) {
       console.log("Cannot fetch blogs");
     } else {
       res.render("index", { blogs: blogs });
+    }
+  });
+});
+
+// NEW route
+app.get("/blogs/new", function(req, res) {
+  res.render("new");
+});
+
+// CREATE route
+app.post("/blogs", function(req, res) {
+  blog.create(req.body.blog, function(err, newBlog) {
+    if (err) {
+      console.log("Error creating new blog.");
+    } else {
+      res.redirect("/blogs");
     }
   });
 });
