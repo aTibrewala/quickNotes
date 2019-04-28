@@ -53,6 +53,18 @@ app.post("/blogs", function(req, res) {
   });
 });
 
+// SHOW route
+app.get("/blogs/:id", function(req, res) {
+  blog.findById(req.params.id, function(err, foundBlog) {
+    if (err) {
+      console.log("Error finding blog.");
+      res.redirect("/blogs");
+    } else {
+      res.render("show", { blog: foundBlog });
+    }
+  });
+});
+
 app.listen(process.env.PORT || 3000, process.env.IP, function() {
   console.log("quickNotes server is running!");
 });
