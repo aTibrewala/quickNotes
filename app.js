@@ -1,4 +1,5 @@
 var express = require("express"),
+  methodOverride = require("method-override"),
   app = express(),
   bodyParser = require("body-parser"),
   mongoose = require("mongoose");
@@ -8,7 +9,7 @@ mongoose.connect("mongodb://localhost/quickNotes");
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
-
+app.use(methodOverride("_method"));
 // MONGOOSE/ MODEL CONFIG
 var quickNotesSchema = new mongoose.Schema({
   title: String,
@@ -61,6 +62,31 @@ app.get("/blogs/:id", function(req, res) {
       res.redirect("/blogs");
     } else {
       res.render("show", { blog: foundBlog });
+    }
+  });
+});
+
+// EDIT route
+app.get("/blogs/:id/edit", function(req, res) {
+  blog.findById(req.params.id, function(err, foundBlog) {
+    if (err) {
+      res.redirect("/blogs");
+    } else {
+      res.render("edit", { blog: foundBlog });
+    }
+  });
+});
+
+// UPDATE route
+app.put("/blogs/:id", function(req, res) {
+  blog.findByIdAndUpdate(req.params.id, req.body.blog, function(
+    err,
+    updatedBlog
+  ) {
+    if (err) {
+      res.redirect("/blogs");
+    } else {
+      res.redirect("/blogs/" + req.params.id);
     }
   });
 });
