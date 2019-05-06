@@ -4,7 +4,7 @@ quickNotes is a clean blogging site developed using Node and Semantic UI, primar
 
 ## Live site
 
-[https://quickn.herokuapp.com/blogs]()
+[https://quickn.herokuapp.com/blogs](https://quickn.herokuapp.com/blogs)
 
 ## Installation
 
