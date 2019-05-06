@@ -1,6 +1,6 @@
 # quickNotes
 
-quickNotes is a clean blogging site developed using Node and Semantic UI, primarily to allow users to share quick notes or facts with accompanying image.
+quickNotes is a clean blogging site developed using Node and Semantic UI, primarily to allow users to share quick notes or facts with accompanying image. Deployed on Heroku and connected to MongoDB Atlas on AWS.
 
 ## Live site
 
