@@ -2,11 +2,12 @@ var express = require("express"),
   methodOverride = require("method-override"),
   expressSanitizer = require("express-sanitizer"),
   app = express(),
+  request = require("request"),
   bodyParser = require("body-parser"),
   mongoose = require("mongoose");
 
 // APP CONFIG
-mongoose.connect("mongodb://localhost/quickNotes");
+mongoose.connect("mongodb://localhost/quickNotes", { useNewUrlParser: true });
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -43,18 +44,46 @@ app.get("/blogs", function(req, res) {
 
 // NEW route
 app.get("/blogs/new", function(req, res) {
-  res.render("new");
+  res.render("new", { captcha: res.recaptcha });
 });
 
 // CREATE route
 app.post("/blogs", function(req, res) {
-  req.body.blog.body = req.sanitize(req.body.blog.body);
-  blog.create(req.body.blog, function(err, newBlog) {
-    if (err) {
-      console.log("Error creating new blog.");
-    } else {
-      res.redirect("/blogs");
+  console.log("captcha" + req.body["g-recaptcha-response"]);
+  if (
+    req.body["g-recaptcha-response"] == undefined ||
+    req.body["g-recaptcha-response"] == "" ||
+    req.body["g-recaptcha-response"] == null
+  ) {
+    res.redirect("/error");
+  }
+
+  var secretKey = "<SECRET-KEY>";
+
+  var verifyURL =
+    "https://google.com/recaptcha/api/siteverify?secret=" +
+    secretKey +
+    "&response=" +
+    req.body["g-recaptcha-response"] +
+    "&remoteip=" +
+    req.connection.remoteAddress;
+
+  request(verifyURL, (error, response, body) => {
+    body = JSON.parse(body);
+
+    if (body.success !== undefined && !body.success) {
+      res.redirect("/error");
     }
+
+    req.body.blog.body = req.sanitize(req.body.blog.body);
+    blog.create(req.body.blog, function(err, newBlog) {
+      if (err) {
+        console.log("Error creating new blog.");
+        res.redirect("/error");
+      } else {
+        res.redirect("/blogs");
+      }
+    });
   });
 });
 

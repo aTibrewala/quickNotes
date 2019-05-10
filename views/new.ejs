@@ -1,24 +1,49 @@
-<% include partials/header %>
+<html>
+  <head>
+    <title>quickNotes</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link href="/stylesheets/app.css" rel="stylesheet" type="text/css" />
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  </head>
+  <body>
+    <div class="ui fixed inverted menu">
+      <div class="ui container">
+        <div class="header item">
+          <i class="coffee small icon"></i>
+          quickNotes
+        </div>
+        <a href="/" class="item">Home</a>
+        <a href="/blogs/new" class="item">New Post</a>
+      </div>
+    </div>
+    <div class="ui main text container segment">
+      <div class="ui huge header">
+        New Blog
+      </div>
+      <form class="ui form" action="/blogs" method="POST">
+        <div class="field">
+          <label>Title</label>
+          <input type="text" name="blog[title]" placeholder="title" required />
+        </div>
+        <div class="field">
+          <label>Image</label>
+          <input type="text" name="blog[image]" placeholder="image" required />
+        </div>
+        <div class="field">
+          <label>Contents</label>
+          <textarea name="blog[body]" required></textarea>
+        </div>
+        <div class="field">
+          <div class="g-recaptcha" data-sitekey="<SITE-KEY>"></div>
+        </div>
+        <input type="submit" />
+      </form>
+    </div>
 
-<div class="ui main text container segment">
-  <div class="ui huge header">
-    New Blog
-  </div>
-  <form class="ui form" action="/blogs" method="POST">
-    <div class="field">
-      <label>Title</label>
-      <input type="text" name="blog[title]" placeholder="title" required />
-    </div>
-    <div class="field">
-      <label>Image</label>
-      <input type="text" name="blog[image]" placeholder="image" required />
-    </div>
-    <div class="field">
-      <label>Contents</label>
-      <textarea name="blog[body]" required></textarea>
-    </div>
-    <input type="submit" />
-  </form>
-</div>
-
-<% include partials/footer %>
+    <% include partials/footer %>
+  </body>
+</html>
