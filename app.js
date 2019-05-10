@@ -112,16 +112,43 @@ app.get("/blogs/:id/edit", function(req, res) {
 
 // UPDATE route
 app.put("/blogs/:id", function(req, res) {
-  req.body.blog.body = req.sanitize(req.body.blog.body);
-  blog.findByIdAndUpdate(req.params.id, req.body.blog, function(
-    err,
-    updatedBlog
+  console.log("captcha" + req.body["g-recaptcha-response"]);
+  if (
+    req.body["g-recaptcha-response"] == undefined ||
+    req.body["g-recaptcha-response"] == "" ||
+    req.body["g-recaptcha-response"] == null
   ) {
-    if (err) {
-      res.redirect("/blogs");
-    } else {
-      res.redirect("/blogs/" + req.params.id);
+    res.redirect("/error");
+  }
+
+  var secretKey = "<SECRET-KEY>";
+
+  var verifyURL =
+    "https://google.com/recaptcha/api/siteverify?secret=" +
+    secretKey +
+    "&response=" +
+    req.body["g-recaptcha-response"] +
+    "&remoteip=" +
+    req.connection.remoteAddress;
+
+  request(verifyURL, (error, response, body) => {
+    body = JSON.parse(body);
+
+    if (body.success !== undefined && !body.success) {
+      res.redirect("/error");
     }
+
+    req.body.blog.body = req.sanitize(req.body.blog.body);
+    blog.findByIdAndUpdate(req.params.id, req.body.blog, function(
+      err,
+      updatedBlog
+    ) {
+      if (err) {
+        res.redirect("/blogs");
+      } else {
+        res.redirect("/blogs/" + req.params.id);
+      }
+    });
   });
 });
 
